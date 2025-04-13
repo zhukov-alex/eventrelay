@@ -1,0 +1,38 @@
+max_segments_to_keep: 100
+wal_type: buffered
+metrics_addr: ":9090"
+
+relay:
+  worker_id: "relay-1"
+  meta_path: "./wal/meta"
+  wal_dir: "./wal"
+  wal_segment_size_mb: 64
+  in_channel_size: 1000
+  sync_on_write: false
+  flush_interval: "1s"
+  output_batch_size: 512
+
+ingest:
+  type: "tcp"
+  tcp:
+    bind_addr: ":9000"
+    max_connections: 100
+    read_timeout: "5s"
+
+output:
+  type: "kafka"
+  kafka:
+    brokers:
+      - "localhost:9092"
+    topic: "events"
+    acks: "all"
+    flush_messages: 100
+    flush_frequency: 500ms
+    channel_buffer_size: 512
+
+logger:
+  log_to_file: true
+  file_path: "./logs/app.log"
+  max_size: 100
+  max_backups: 7
+  max_age_days: 30
