@@ -62,7 +62,7 @@ func New(logger *zap.Logger, cfg Config, ww writer.WalWriter, out output.Output,
 		wal:     ww,
 		output:  out,
 		inCh:    make(chan inRequest, cfg.InChannelSize),
-		outCh:   make(chan batchToOut, 100),
+		outCh:   make(chan batchToOut, cfg.OutChannelSize),
 		metrics: initMetrics(registerMetrics),
 		logger:  logger,
 	}
@@ -220,6 +220,7 @@ func (s *ServiceImpl) dispatchLoop() {
 					return
 				}
 			}
+			logger.Info("batch sent to output OK")
 			stopBatchTimer()
 
 			if err := saveMeta(s.cfg.MetaPath, curBatch.segment, curBatch.offset); err != nil {

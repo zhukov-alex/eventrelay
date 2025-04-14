@@ -49,31 +49,45 @@ func (k *KafkaBroker) Send(_ context.Context, _ OutputMessage, _ string) error {
 func (k *KafkaBroker) SendBatch(ctx context.Context, batch OutputBatchMessage) error {
 	logger := k.logger.With(zap.String("method", "SendBatch"))
 
-	expected := len(batch.Batch)
-	expectedIDs := make(map[string]struct{}, expected)
+	expectedIDs := make(map[string]struct{})
+	remaining := make(map[string]struct{})
 	for _, msg := range batch.Batch {
 		expectedIDs[msg.ID] = struct{}{}
+		remaining[msg.ID] = struct{}{}
 	}
 
-	acked := make(chan struct{}, expected)
+	done := make(chan struct{})
 	errChan := make(chan error, 1)
 
 	go func() {
 		for {
 			select {
 			case msg := <-k.producer.Successes():
-				bm, ok := msg.Metadata.(OutputMessage)
+				meta, ok := msg.Metadata.(OutputMessage)
 				if !ok {
+					logger.Warn("kafka ack metadata type mismatch")
 					continue
 				}
-				if _, ok := expectedIDs[bm.ID]; !ok {
+
+				if _, ok := expectedIDs[meta.ID]; !ok {
+					logger.Warn("kafka acked unknown message ID", zap.String("id", meta.ID))
 					continue
 				}
-				acked <- struct{}{}
+
+				if _, still := remaining[meta.ID]; still {
+					delete(remaining, meta.ID)
+				}
+
+				if len(remaining) == 0 {
+					close(done)
+					return
+				}
+
 			case err := <-k.producer.Errors():
 				logger.Error("kafka send error", zap.Error(err.Err))
 				errChan <- err.Err
 				return
+
 			case <-ctx.Done():
 				errChan <- ctx.Err()
 				return
@@ -100,17 +114,14 @@ func (k *KafkaBroker) SendBatch(ctx context.Context, batch OutputBatchMessage) e
 		}
 	}
 
-	for i := 0; i < expected; i++ {
-		select {
-		case <-acked:
-		case err := <-errChan:
-			return err
-		case <-ctx.Done():
-			return ctx.Err()
-		}
+	select {
+	case <-done:
+		return nil
+	case err := <-errChan:
+		return err
+	case <-ctx.Done():
+		return ctx.Err()
 	}
-
-	return nil
 }
 
 func (k *KafkaBroker) Close(ctx context.Context) error {

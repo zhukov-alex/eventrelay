@@ -1,10 +1,7 @@
 # EventRelay
 
-A high-performance event relay service designed for reliably receiving, logging, and asynchronously forwarding events. It ensures at-least-once delivery guarantees by utilizing a local Write-Ahead Log (WAL), with immediate acknowledgment after disk persistence, and subsequent batch forwarding to downstream systems such as Kafka or other sinks.
+A high-performance event relay service designed for reliably receiving, logging, and asynchronously forwarding events. It ensures at-least-once delivery guarantees by utilizing a local Write-Ahead Log (WAL), with immediate acknowledgment after disk persistence, and subsequent batch forwarding to downstream systems such as Kafka or other sinks. In case of a service restart, events stored in the WAL are replayed and reliably delivered. This ensures data durability, crash resilience, and scalability, making it suitable for audit logging, event sourcing, and high-load data ingestion services.
 
-EventRelay accepts events from network sources (currently via TCP, extendable to gRPC, etc.), persists them to a fast and durable Write-Ahead Log (WAL), immediately acknowledges to the sender, and forwards the events asynchronously to downstream sinks like Kafka or other message queues. In case of a service restart, events stored in the WAL are replayed and reliably delivered.
-
-This ensures data durability, crash resilience, and scalability, making it suitable for audit logging, event sourcing, and high-load data ingestion services.
 
 ## Features
 
@@ -36,7 +33,7 @@ internal/
   mocks/             - Generated test mocks
   output/            - Output sinks (Kafka, extendable)
   relay/             - Relay logic (event handling, WAL replay, batching)
-  wal/               - Write-ahead log implementation
+  wal/               - Durable writer implementations
 ```
 
 
@@ -69,7 +66,8 @@ docker run -p 9000:9000 -v $(pwd)/wal:/wal relay:latest
 ### Run tests
 
 ```bash
-make test
+make test          # Unit & integration tests
+make acceptance    # End-to-end acceptance tests
 ```
 
 ### Generate mocks

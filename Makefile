@@ -1,7 +1,7 @@
 MOCK_DIR := internal/mocks
 BIN_DIR := bin
 
-.PHONY: all test mocks fmt lint clean build docker-build
+.PHONY: all test acceptance mocks fmt lint clean build docker-build
 
 all: test
 
@@ -16,6 +16,9 @@ docker-build:
 
 test:
 	go test ./... -v -race
+
+acceptance:
+	go test -v ./test/acceptance
 
 mocks:
 	mockgen -source=internal/output/output.go -destination=$(MOCK_DIR)/mock_output.go -package=mocks

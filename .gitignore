@@ -20,3 +20,12 @@ go.work.sum
 
 # env file
 .env
+
+# Editor-specific
+.vscode/
+.idea/
+*.swp
+
+# Builds and default WALs
+bin/
+wal/

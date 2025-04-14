@@ -8,6 +8,7 @@ relay:
   wal_dir: "./wal"
   wal_segment_size_mb: 64
   in_channel_size: 1000
+  out_channel_size: 100
   sync_on_write: false
   flush_interval: "1s"
   output_batch_size: 512

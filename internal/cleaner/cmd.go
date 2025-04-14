@@ -2,13 +2,13 @@ package cleaner
 
 import (
 	"fmt"
-	"github.com/zhukov-alex/eventrelay/internal/logger"
 	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zhukov-alex/eventrelay/internal/config"
+	"github.com/zhukov-alex/eventrelay/internal/logger"
 )
 
 const EnvStage = "ENVIRONMENT"
