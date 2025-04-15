@@ -3,6 +3,11 @@
 A high-performance event relay service designed for reliably receiving, logging, and asynchronously forwarding events. It ensures at-least-once delivery guarantees by utilizing a local Write-Ahead Log (WAL), with immediate acknowledgment after disk persistence, and subsequent batch forwarding to downstream systems such as Kafka or other sinks. In case of a service restart, events stored in the WAL are replayed and reliably delivered. This ensures data durability, crash resilience, and scalability, making it suitable for audit logging, event sourcing, and high-load data ingestion services.
 
 
+## Architecture
+
+![Architecture](docs/eventrelay-component.png)
+
+
 ## Features
 
 - Durable write-ahead logging (WAL) with immediate disk sync
