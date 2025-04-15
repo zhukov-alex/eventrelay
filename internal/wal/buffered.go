@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// BufferedWriter is a simple WAL writer using buffered I/O and fsync.
 type BufferedWriter struct {
 	file   *os.File
 	writer *bufio.Writer
@@ -42,7 +43,13 @@ func (w *BufferedWriter) Flush() error {
 	if w.writer == nil {
 		return nil
 	}
-	return w.writer.Flush()
+	if err := w.writer.Flush(); err != nil {
+		return err
+	}
+	if w.file != nil {
+		return w.file.Sync()
+	}
+	return nil
 }
 
 func (w *BufferedWriter) Close() error {

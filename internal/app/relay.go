@@ -66,8 +66,8 @@ func RelayCmd(_ *cobra.Command, _ []string) error {
 	switch cfg.WALType {
 	case "buffered":
 		ww = wal.NewBufferedWriter()
-	//case "mmap":
-	//	ww = wal.NewMmapWriter()
+	case "mmap":
+		ww = wal.NewMmapWriter(int(cfg.Relay.WALSegmentSizeMB * 1024 * 1024))
 	default:
 		return fmt.Errorf("unsupported wal writer: %q", cfg.WALType)
 	}

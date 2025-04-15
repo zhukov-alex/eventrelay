@@ -28,4 +28,4 @@ go.work.sum
 
 # Builds and default WALs
 bin/
-wal/
+/wal/
