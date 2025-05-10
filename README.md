@@ -13,7 +13,7 @@ A high-performance event relay service designed for reliably receiving, logging,
 - Durable write-ahead logging (WAL) with immediate disk sync
 - At-least-once delivery guarantees
 - Batch-oriented asynchronous event forwarding
-- Support for pluggable ingestion protocols (currently TCP, designed to support gRPC, etc.)
+- Support for pluggable ingestion protocols (TCP, gRPC, etc.)
 - Modular output support (Kafka implemented, extendable to others)
 - WAL replay capability for crash recovery
 - Graceful shutdown and configurable flush intervals
@@ -32,13 +32,17 @@ internal/
   app/               - Application bootstrap and coordination
   cleaner/           - Periodic WAL segment cleanup
   config/            - Configuration
-  ingest/            - Event ingestion (TCP, extendable)
+  ingest/            - Event ingestion (TCP, gRPC)
   logger/            - Structured logging and rotating files
   metrics/           - Metrics exposure
   mocks/             - Generated test mocks
   output/            - Output sinks (Kafka, extendable)
   relay/             - Relay logic (event handling, WAL replay, batching)
   wal/               - Durable writer implementations
+
+proto/
+  ingest.proto       - gRPC service and message definitions
+  ingestpb/          - Generated code
 ```
 
 

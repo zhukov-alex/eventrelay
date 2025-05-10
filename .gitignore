@@ -29,3 +29,6 @@ go.work.sum
 # Builds and default WALs
 bin/
 /wal/
+
+# Generated proto files
+proto/ingestpb/*.pb.go

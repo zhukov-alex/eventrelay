@@ -80,15 +80,9 @@ func RelayCmd(_ *cobra.Command, _ []string) error {
 	ingestor, err := func() (ingest.Ingest, error) {
 		switch cfg.Ingest.Type {
 		case "tcp":
-			if cfg.Ingest.TCP == nil {
-				return nil, fmt.Errorf("tcp config is missing")
-			}
 			return ingest.NewTCPServer(l, cfg.Ingest.TCP, collectMetrics), nil
-		//case "grpc":
-		//	if cfg.Ingest.GRPC == nil {
-		//		return nil, fmt.Errorf("grpc config is missing")
-		//	}
-		//	return ingest.NewGRPCServer(cfg.Ingest.GRPC, collectMetrics), nil
+		case "grpc":
+			return ingest.NewGRPCServer(l, cfg.Ingest.GRPC, collectMetrics), nil
 		default:
 			return nil, fmt.Errorf("unsupported ingest type: %s", cfg.Ingest.Type)
 		}

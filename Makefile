@@ -1,7 +1,9 @@
 MOCK_DIR := internal/mocks
 BIN_DIR := bin
+PROTO_DIR = proto
+PROTO_OUT = proto/ingestpb
 
-.PHONY: all test acceptance mocks fmt lint clean build docker-build
+.PHONY: all test acceptance mocks fmt lint clean build docker-build proto
 
 all: test
 
@@ -13,6 +15,13 @@ build:
 
 docker-build:
 	docker build -t relay:latest .
+
+proto:
+	mkdir -p proto/ingestpb
+	protoc -I=proto \
+	  --go_out=proto/ingestpb --go_opt=paths=source_relative \
+	  --go-grpc_out=proto/ingestpb --go-grpc_opt=paths=source_relative \
+	  proto/ingest.proto
 
 test:
 	go test ./... -v -race

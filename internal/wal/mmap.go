@@ -84,6 +84,9 @@ func (w *MmapWriter) Flush() error {
 		return err
 	}
 
+	// Advise kernel to evict flushed region
+	_ = unix.Madvise(w.data[start:end], unix.MADV_DONTNEED)
+
 	// Update last synced offset
 	w.lastSyncOffset = end
 	return nil

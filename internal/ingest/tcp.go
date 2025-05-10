@@ -14,8 +14,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const MaxEventSize = 10 * 1024 * 1024 // 10mb
-
 var lengthBufPool = sync.Pool{
 	New: func() any { return make([]byte, 4) },
 }

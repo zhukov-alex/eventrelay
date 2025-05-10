@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ingestpb;
+
+option go_package = "github.com/zhukov-alex/eventrelay/proto/ingestpb";
+
+service Ingestor {
+  rpc StreamLogs (stream LogEvent) returns (stream Ack);
+}
+
+message LogEvent {
+  string id = 1;
+  bytes data = 2;
+  int64 timestamp = 3;
+}
+
+message Ack {
+  bool ok = 1;
+}

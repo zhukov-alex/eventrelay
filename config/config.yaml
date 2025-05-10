@@ -19,6 +19,9 @@ ingest:
     bind_addr: ":9000"
     max_connections: 100
     read_timeout: "5s"
+  grpc:
+    bind_addr: ":50051"
+    read_timeout: "5s"
 
 output:
   type: "kafka"
